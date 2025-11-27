@@ -5,16 +5,16 @@ import 'package:intl/intl.dart';
 import '../models/evento.dart';
 import '../models/categoria.dart';
 
-class AddEventPage extends StatefulWidget {
-  const AddEventPage({super.key});
+class AgregarEventoPage extends StatefulWidget {
+  const AgregarEventoPage({super.key});
 
   @override
-  State<AddEventPage> createState() => _AddEventPageState();
+  State<AgregarEventoPage> createState() => _AgregarEventoPageState();
 }
 
-class _AddEventPageState extends State<AddEventPage> {
-  final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+class _AgregarEventoPageState extends State<AgregarEventoPage> {
+  final _claveFormulario = GlobalKey<FormState>();
+  bool _estaCargando = false;
 
   String? titulo;
   String? lugar;
@@ -22,7 +22,7 @@ class _AddEventPageState extends State<AddEventPage> {
   Categoria? categoriaSeleccionada;
 
   Future<void> agregarEvento() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_claveFormulario.currentState!.validate()) return;
     if (fechaHora == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -54,12 +54,12 @@ class _AddEventPageState extends State<AddEventPage> {
       return;
     }
 
-    _formKey.currentState!.save();
+    _claveFormulario.currentState!.save();
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+    final usuario = FirebaseAuth.instance.currentUser;
+    if (usuario == null) return;
 
-    setState(() => _isLoading = true);
+    setState(() => _estaCargando = true);
 
     try {
       final nuevoEvento = Evento(
@@ -68,17 +68,17 @@ class _AddEventPageState extends State<AddEventPage> {
         lugar: lugar ?? '',
         fechaHora: fechaHora!, 
         categoriaId: categoriaSeleccionada!.id,
-        autor: (user.email ?? 'Desconocido').trim().toLowerCase(),
+        autor: (usuario.email ?? 'Desconocido').trim().toLowerCase(),
       );
 
 
-      final docRef = await FirebaseFirestore.instance.collection('eventos').add({
+      final refDocumento = await FirebaseFirestore.instance.collection('eventos').add({
         ...nuevoEvento.toMap(),
         'fechaHora': Timestamp.fromDate(nuevoEvento.fechaHora.toUtc()),
         'autor': nuevoEvento.autor,
       });
 
-      await docRef.update({'id': docRef.id});
+      await refDocumento.update({'id': refDocumento.id});
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -92,7 +92,7 @@ class _AddEventPageState extends State<AddEventPage> {
         );
       });
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => _estaCargando = false);
     }
   }
 
@@ -147,7 +147,7 @@ class _AddEventPageState extends State<AddEventPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: _formKey,
+          key: _claveFormulario,
           child: ListView(
             children: [
               TextFormField(
@@ -213,8 +213,8 @@ class _AddEventPageState extends State<AddEventPage> {
 
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: _isLoading ? null : agregarEvento,
-                child: _isLoading
+                onPressed: _estaCargando ? null : agregarEvento,
+                child: _estaCargando
                     ? const CircularProgressIndicator()
                     : const Text("Agregar"),
               ),

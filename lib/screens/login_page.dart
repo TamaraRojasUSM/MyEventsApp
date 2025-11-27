@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthService _auth = AuthService();
-  bool _isLoading = false;
+  bool _estaCargando = false;
 
   void _showSnackBar(String message, {Color? backgroundColor, IconData? icon}) {
     final messenger = ScaffoldMessenger.of(context);
@@ -40,21 +40,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _signInWithGoogle() async {
-  setState(() => _isLoading = true);
+  setState(() => _estaCargando = true);
 
   try {
     try {
       await _auth.signOutAll();
     } catch (_) {}
 
-    final user = await _auth.signInWithGoogle();
+    final usuario = await _auth.signInWithGoogle();
 
-    if (user == null && mounted) {
+    if (usuario == null && mounted) {
       _showSnackBar('Inicio de sesión cancelado', backgroundColor: Colors.orange, icon: Icons.warning);
       return;
     }
 
-    if (user != null && mounted) {
+    if (usuario != null && mounted) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
     }
   } on Exception catch (e) {
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
       _showSnackBar('Error al iniciar sesión: ${e.toString()}', backgroundColor: Colors.red, icon: Icons.error);
     }
   } finally {
-    if (mounted) setState(() => _isLoading = false);
+    if (mounted) setState(() => _estaCargando = false);
   }
 }
 
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    icon: _isLoading
+                    icon: _estaCargando
                         ? const SizedBox(
                             width: 18,
                             height: 18,
@@ -131,11 +131,11 @@ class _LoginPageState extends State<LoginPage> {
                         : const Icon(Icons.login, color: Colors.white),
                     label: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(_isLoading ? 'Ingresando...' : 'Ingresar con Google',
+                      child: Text(_estaCargando ? 'Ingresando...' : 'Ingresar con Google',
                           style: const TextStyle(fontSize: 18, color: Colors.white)),
                     ),
                     style: finalButtonStyle,
-                    onPressed: _isLoading ? null : _signInWithGoogle,
+                    onPressed: _estaCargando ? null : _signInWithGoogle,
                   ),
                 ),
               ],

@@ -17,11 +17,11 @@ class _MisEventosVigentesPageState extends State<MisEventosVigentesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) {
+    final usuarioAutenticado = FirebaseAuth.instance.currentUser;
+    if (usuarioAutenticado == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    final email = currentUser.email!;
+    final email = usuarioAutenticado.email!;
 
     return Scaffold(
       appBar: AppBar(

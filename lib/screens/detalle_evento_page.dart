@@ -12,7 +12,7 @@ class DetalleEventoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final usuarioAutenticado = FirebaseAuth.instance.currentUser;
     final formatoFecha = DateFormat('dd/MM/yyyy HH:mm');
 
     return Scaffold(
@@ -31,33 +31,33 @@ class DetalleEventoPage extends StatelessWidget {
             return const Center(child: Text('Evento no encontrado'));
           }
 
-          final rawData = snapEvento.data!.data();
-          final data = rawData is Map<String, dynamic> ? rawData : null;
-          if (data == null) {
+          final datosEvento = snapEvento.data!.data();
+          final datos = datosEvento is Map<String, dynamic> ? datosEvento : null;
+          if (datos == null) {
             return const Center(child: Text('Evento no encontrado'));
           }
 
           DateTime fecha;
-          final rawFecha = data['fechaHora'];
-          if (rawFecha is Timestamp) {
-            fecha = rawFecha.toDate();
-          } else if (rawFecha is String) {
-            fecha = DateTime.tryParse(rawFecha) ?? DateTime.now();
+          final fechaOriginal = datos['fechaHora'];
+          if (fechaOriginal is Timestamp) {
+            fecha = fechaOriginal.toDate();
+          } else if (fechaOriginal is String) {
+            fecha = DateTime.tryParse(fechaOriginal) ?? DateTime.now();
           } else {
             fecha = DateTime.now();
           }
 
           final evento = Evento(
             id: snapEvento.data!.id,
-            titulo: data['titulo'] ?? '',
-            lugar: data['lugar'] ?? '',
+            titulo: datos['titulo'] ?? '',
+            lugar: datos['lugar'] ?? '',
             fechaHora: fecha,
-            categoriaId: data['categoriaId'] ?? '',
-            autor: data['autor'] ?? '',
+            categoriaId: datos['categoriaId'] ?? '',
+            autor: datos['autor'] ?? '',
           );
 
-          final userEmail = (currentUser?.email ?? '').trim().toLowerCase();
-          final esAutor = evento.autor.trim().toLowerCase() == userEmail;
+          final emailUsuario = (usuarioAutenticado?.email ?? '').trim().toLowerCase();
+          final esAutor = evento.autor.trim().toLowerCase() == emailUsuario;
 
           if (evento.categoriaId.isEmpty) {
             return _DetalleSinCategoria(evento: evento, formatoFecha: formatoFecha);
@@ -74,13 +74,13 @@ class DetalleEventoPage extends StatelessWidget {
                 return _DetalleSinCategoria(evento: evento, formatoFecha: formatoFecha);
               }
 
-              final catRaw = snapCategoria.data!.data();
-              final catData = catRaw is Map<String, dynamic> ? catRaw : null;
-              if (catData == null) {
+              final catOriginal = snapCategoria.data!.data();
+              final catDatos = catOriginal is Map<String, dynamic> ? catOriginal : null;
+              if (catDatos == null) {
                 return _DetalleSinCategoria(evento: evento, formatoFecha: formatoFecha);
               }
 
-              final categoria = Categoria.fromMap(snapCategoria.data!.id, catData);
+              final categoria = Categoria.fromMap(snapCategoria.data!.id, catDatos);
 
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),

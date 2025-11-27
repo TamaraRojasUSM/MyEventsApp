@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:proyecto_eventos/screens/agregar_evento_page.dart';
 import 'package:proyecto_eventos/theme/app_theme.dart';
 import 'widgets/auth_gate.dart';
-import 'screens/add_event_page.dart';
 import 'screens/home_page.dart' as home;
 import 'screens/detalle_evento_page.dart' as detalle;
 import 'screens/login_page.dart'; 
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(), 
         '/home': (context) => const home.HomePage(),
-        '/agregar_evento': (context) => const AddEventPage(),
+        '/agregar_evento': (context) => const AgregarEventoPage(),
         '/detalle_evento': (context) {
           final eventoId = ModalRoute.of(context)!.settings.arguments as String;
           return detalle.DetalleEventoPage(eventoId: eventoId);

@@ -29,8 +29,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showTopPanel(BuildContext context) async {
     HapticFeedback.lightImpact();
-    final screenHeight = MediaQuery.of(context).size.height;
-    final panelHeight = screenHeight * 0.72;
+    final altoPantalla = MediaQuery.of(context).size.height;
+    final altoPanel = altoPantalla * 0.72;
 
     await showGeneralDialog(
       context: context,
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 child: Container(
-                  height: panelHeight,
+                  height: altoPanel,
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTopPanelContent(BuildContext dialogContext) {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final usuarioAutenticado = FirebaseAuth.instance.currentUser;
 
     return Column(
       children: [
@@ -90,9 +90,9 @@ class _HomePageState extends State<HomePage> {
                 child: ClipOval(
                   child: CircleAvatar(
                     radius: 28,
-                    backgroundImage: currentUser?.photoURL != null ? NetworkImage(currentUser!.photoURL!) : null,
+                    backgroundImage: usuarioAutenticado?.photoURL != null ? NetworkImage(usuarioAutenticado!.photoURL!) : null,
                     backgroundColor: Colors.grey.shade300,
-                    child: currentUser?.photoURL == null ? const Icon(Icons.person, color: Colors.white) : null,
+                    child: usuarioAutenticado?.photoURL == null ? const Icon(Icons.person, color: Colors.white) : null,
                   ),
                 ),
               ),
@@ -102,11 +102,11 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      currentUser?.displayName ?? 'Usuario',
+                      usuarioAutenticado?.displayName ?? 'Usuario',
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
-                    Text(currentUser?.email ?? '', style: const TextStyle(color: Colors.black54)),
+                    Text(usuarioAutenticado?.email ?? '', style: const TextStyle(color: Colors.black54)),
                   ],
                 ),
               ),
@@ -329,9 +329,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    final email = currentUser.email!.trim().toLowerCase();
+    final usuarioAutenticado = FirebaseAuth.instance.currentUser;
+    if (usuarioAutenticado == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final email = usuarioAutenticado.email!.trim().toLowerCase();
 
     return Scaffold(
       appBar: AppBar(
